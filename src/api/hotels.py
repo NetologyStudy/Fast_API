@@ -21,8 +21,18 @@ async def get_hotels(
         title: str | None = Query(None, description="Название"),
         location: str | None = Query(None, description="Местонахождение"),
 ):
+    per_page = pagination.per_page or 5
     async with async_session_maker() as session:
         query = select(HotelsOrm)
+        if id:
+            query = query.filter_by(id=id)
+        if title:
+            query = query.filter_by(title=title)
+        query = (
+            query
+            .limit(per_page)
+            .offset(per_page * (pagination.page - 1))
+        )
         result = await session.execute(query)
         hotels = result.scalars().all()
         return hotels
