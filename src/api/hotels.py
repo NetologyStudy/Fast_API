@@ -5,6 +5,7 @@ from sqlalchemy import insert, select
 from src.api.dependencies import PaginationDep
 from src.database import async_session_maker, engine
 from src.models.hotels import HotelsOrm
+from src.repositories.hotels import HotelsRepository
 from src.schemas.hotels import Hotel, HotelPATCH
 
 router = APIRouter(prefix="/hotels", tags=["Отили"])
@@ -22,20 +23,21 @@ async def get_hotels(
 ):
     per_page = pagination.per_page or 5
     async with async_session_maker() as session:
-        query = select(HotelsOrm)
-        if location:
-            query = query.filter(HotelsOrm.location.icontains(location.strip()))
-        if title:
-            query = query.filter(HotelsOrm.title.icontains(title.strip()))
-        query = (
-            query
-            .limit(per_page)
-            .offset(per_page * (pagination.page - 1))
-        )
-        print(query.compile(compile_kwargs={"literal_binds": True}))
-        result = await session.execute(query)
-        hotels = result.scalars().all()
-        return hotels
+        return await HotelsRepository(session).get_all()
+        # query = select(HotelsOrm)
+        # if location:
+        #     query = query.filter(HotelsOrm.location.icontains(location.strip()))
+        # if title:
+        #     query = query.filter(HotelsOrm.title.icontains(title.strip()))
+        # query = (
+        #     query
+        #     .limit(per_page)
+        #     .offset(per_page * (pagination.page - 1))
+        # )
+        # print(query.compile(compile_kwargs={"literal_binds": True}))
+        # result = await session.execute(query)
+        # hotels = result.scalars().all()
+        # return hotels
 
 
 @router.post(
