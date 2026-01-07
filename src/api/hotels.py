@@ -8,7 +8,7 @@ from src.models.hotels import HotelsOrm
 from src.repositories.hotels import HotelsRepository
 from src.schemas.hotels import Hotel, HotelPATCH
 
-router = APIRouter(prefix="/hotels", tags=["Отили"])
+router = APIRouter(prefix="/hotels", tags=["Отели"])
 
 
 @router.get(
@@ -48,12 +48,12 @@ async def create_hotel(hotel_data: Hotel = Body(openapi_examples={
 })
 ):
     async with async_session_maker() as session:
-        add_hotel_stmt = insert(HotelsOrm).values(**hotel_data.model_dump())
+        # add_hotel_stmt = insert(HotelsOrm).values(**hotel_data.model_dump())
         # print(add_hotel_stmt.compile(engine, compile_kwargs={"literal_binds": True}))
-        await session.execute(add_hotel_stmt)
+        hotel = await HotelsRepository(session).add(hotel_data)
         await session.commit()
 
-    return {"status": "OK"}
+    return {"status": "OK", "data": hotel}
 
 
 @router.put(
