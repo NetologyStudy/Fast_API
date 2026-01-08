@@ -1,10 +1,8 @@
 from fastapi import Query, Path, APIRouter, Body
 
-from sqlalchemy import insert, select
 
 from src.api.dependencies import PaginationDep
 from src.database import async_session_maker, engine
-from src.models.hotels import HotelsOrm
 from src.repositories.hotels import HotelsRepository
 from src.schemas.hotels import Hotel, HotelPATCH
 
@@ -48,8 +46,6 @@ async def create_hotel(hotel_data: Hotel = Body(openapi_examples={
 })
 ):
     async with async_session_maker() as session:
-        # add_hotel_stmt = insert(HotelsOrm).values(**hotel_data.model_dump())
-        # print(add_hotel_stmt.compile(engine, compile_kwargs={"literal_binds": True}))
         hotel = await HotelsRepository(session).add(hotel_data)
         await session.commit()
 
@@ -61,15 +57,14 @@ async def create_hotel(hotel_data: Hotel = Body(openapi_examples={
     summary="Полное обновление данных",
     description="<h1>Позволяет обновить всю информациию выбранного отеля</h1>"
 )
-def edit_hotel(
+async def edit_hotel(
         hotel_data: Hotel,
         hotel_id: int = Path(description="Уникальный идентификатор")
 ):
-    global hotels
-    hotel = [hotel for hotel in hotels if hotel["id"] == hotel_id][0]
-    if hotel_id == hotel["id"]:
-        hotel["title"] = hotel_data.title
-        hotel["location"] = hotel_data.location
+    async with async_session_maker() as session:
+        await HotelsRepository(session).edit(id=hotel_id, data=hotel_data)
+        await session.commit()
+
     return {"status": "OK"}
 
 
@@ -95,7 +90,8 @@ def partially_edit_hotel(
     summary="Полное удаление данных",
     description="<h1>ОСТОРОЖНО! Полностью удаляет всю информацию выбранного отеля!</h1>"
 )
-def delete_hotel(hotel_id: int = Path(description="Уникальный идентификатор")):
-    global hotels
-    hotels = [hotel for hotel in hotels if hotel["id"] != hotel_id]
+async def delete_hotel(hotel_id: int = Path(description="Уникальный идентификатор")):
+    async with async_session_maker() as session:
+        await HotelsRepository(session).delete(id=hotel_id)
+        await session.commit()
     return {"status": "OK"}
