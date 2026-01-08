@@ -1,6 +1,5 @@
 from fastapi import Query, Path, APIRouter, Body
 
-
 from src.api.dependencies import PaginationDep
 from src.database import async_session_maker, engine
 from src.repositories.hotels import HotelsRepository
@@ -73,16 +72,13 @@ async def edit_hotel(
     summary="Частичное обновление данных",
     description="<h1>Позволяет частично обновить инофрмацию выбранного отеля</h1>"
 )
-def partially_edit_hotel(
+async def partially_edit_hotel(
         hotel_data: HotelPATCH,
         hotel_id: int = Path(description="Уникальный идентификатор")
 ):
-    global hotels
-    hotel = [hotel for hotel in hotels if hotel["id"] == hotel_id][0]
-    if hotel_data.title:
-        hotel["title"] = hotel_data.title
-    if  hotel_data.location:
-        hotel["location"] = hotel_data.location
+    async with async_session_maker() as session:
+        await HotelsRepository(session).edit(id=hotel_id, exclude_unset=True, data=hotel_data)
+        await session.commit()
     return {"status": "OK"}
 
 @router.delete(
