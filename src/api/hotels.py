@@ -28,6 +28,15 @@ async def get_hotels(
         )
 
 
+@router.get(
+    "/{hotel_id}",
+    summary="Получение информации одного отеля",
+    description="<h1>Получение информации одного конкретного отеля по его id</h1>")
+async def get_one_hotels(hotel_id: int = Path(description="Уникальный идентификатор")):
+    async with async_session_maker() as session:
+        return await HotelsRepository(session).get_one_or_none(id=hotel_id)
+
+
 @router.post(
     "",
     summary="Добавлениие новых данных",
