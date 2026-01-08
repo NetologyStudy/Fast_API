@@ -3,7 +3,7 @@ from fastapi import Query, Path, APIRouter, Body
 from src.api.dependencies import PaginationDep
 from src.database import async_session_maker, engine
 from src.repositories.hotels import HotelsRepository
-from src.schemas.hotels import Hotel, HotelPATCH
+from src.schemas.hotels import Hotel, HotelPATCH, HotelAdd
 
 router = APIRouter(prefix="/hotels", tags=["Отели"])
 
@@ -42,7 +42,7 @@ async def get_one_hotels(hotel_id: int = Path(description="Уникальный 
     summary="Добавлениие новых данных",
     description="<h1>Добавление полностью новой информации: нового отеля и его данных</h1>"
 )
-async def create_hotel(hotel_data: Hotel = Body(openapi_examples={
+async def create_hotel(hotel_data: HotelAdd = Body(openapi_examples={
     "1": {"summary": "Сочи", "value":{
         "title": "Отель Rich 5 звезд у моря",
         "location": "Sochi, Russia",
@@ -66,7 +66,7 @@ async def create_hotel(hotel_data: Hotel = Body(openapi_examples={
     description="<h1>Позволяет обновить всю информациию выбранного отеля</h1>"
 )
 async def edit_hotel(
-        hotel_data: Hotel,
+        hotel_data: HotelAdd,
         hotel_id: int = Path(description="Уникальный идентификатор")
 ):
     async with async_session_maker() as session:
