@@ -12,5 +12,5 @@ class UsersOrm(Base):
     first_name: Mapped[str] = mapped_column(String(64))
     last_name: Mapped[str] = mapped_column(String(64), unique=True)
     nickname: Mapped[str] = mapped_column(String(64), unique=True)
-    email: Mapped[EmailStr] = mapped_column(String(100))
+    email: Mapped[str] = mapped_column(String(100))
     hashed_password: Mapped[str] = mapped_column(String(100))
