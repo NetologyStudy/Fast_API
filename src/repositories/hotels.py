@@ -14,6 +14,7 @@ class HotelsRepository(BaseRepository):
             self,
             location,
             title,
+            stars,
             limit,
             offset
     ):
@@ -22,6 +23,8 @@ class HotelsRepository(BaseRepository):
             query = query.filter(HotelsOrm.location.icontains(location.strip()))
         if title:
             query = query.filter(HotelsOrm.title.icontains(title.strip()))
+        if stars:
+            query = query.filter(HotelsOrm.stars.contains(stars.strip()))
         query = (
             query
             .limit(limit)

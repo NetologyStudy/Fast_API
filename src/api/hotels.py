@@ -17,12 +17,14 @@ async def get_hotels(
         pagination: PaginationDep,
         title: str | None = Query(None, description="Название"),
         location: str | None = Query(None, description="Месторпасположение"),
+        stars: int | None = Query(None, description="Количество звезд")
 ):
     per_page = pagination.per_page or 5
     async with async_session_maker() as session:
         return await HotelsRepository(session).get_all(
             location=location,
             title=title,
+            stars=stars,
             limit=per_page,
             offset=per_page * (pagination.page - 1),
         )
@@ -44,12 +46,14 @@ async def get_one_hotels(hotel_id: int = Path(description="Уникальный 
 )
 async def create_hotel(hotel_data: HotelAdd = Body(openapi_examples={
     "1": {"summary": "Сочи", "value":{
-        "title": "Отель Rich 5 звезд у моря",
+        "title": "Отель Rich у моря",
         "location": "Sochi, Russia",
+        "stars": "4",
     }},
     "2": {"summary": "Дубай", "value":{
-        "title": "Отель RELAX 5 звезд у моря",
+        "title": "Отель RELAX у фонтана",
         "location": "Dubai, UAE",
+        "stars": "5",
     }},
 })
 ):
