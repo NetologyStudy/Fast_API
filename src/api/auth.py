@@ -1,10 +1,22 @@
 from fastapi import APIRouter, Body
 
+from passlib.context import CryptContext
+
 from src.database import async_session_maker
 from src.repositories.users import UsersRepository
 from src.schemas.users import UserRequestAdd, UserAdd
 
 router = APIRouter(prefix="/auth", tags=["Авторизация и аутентификация"])
+
+
+pwd_context = CryptContext(
+    schemes=["argon2"],
+    deprecated="auto",
+    argon2__type="id",
+    argon2__time_cost=3,
+    argon2__memory_cost=65536,
+    argon2__parallelism=4
+)
 
 
 @router.post(
@@ -13,7 +25,8 @@ router = APIRouter(prefix="/auth", tags=["Авторизация и аутент
     description="Регистрация нового клиента"
 )
 async def register_user(data: UserRequestAdd):
-    hashed_password = "1243sdf342gdsd"
+    hashed_password = pwd_context.hash(data.password)
+
     new_user_data = UserAdd(first_name=data.first_name,
                             last_name=data.last_name,
                             nickname=data.nickname,
