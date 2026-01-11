@@ -1,3 +1,4 @@
+import sqlalchemy
 from fastapi import APIRouter, Body
 
 from passlib.context import CryptContext
@@ -26,7 +27,6 @@ pwd_context = CryptContext(
 )
 async def register_user(data: UserRequestAdd):
     hashed_password = pwd_context.hash(data.password)
-
     new_user_data = UserAdd(first_name=data.first_name,
                             last_name=data.last_name,
                             nickname=data.nickname,
@@ -34,6 +34,9 @@ async def register_user(data: UserRequestAdd):
                             hashed_password=hashed_password,
                             )
     async with async_session_maker() as session:
-        await UsersRepository(session).add(new_user_data)
+        try:
+            await UsersRepository(session).add(new_user_data)
+        except sqlalchemy.exc.IntegrityError:
+            return {"message": "Пользователь с таким email или nickname уже существует"}
         await session.commit()
     return {"status": "OK"}

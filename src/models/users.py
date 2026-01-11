@@ -10,7 +10,7 @@ class UsersOrm(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     first_name: Mapped[str] = mapped_column(String(64))
-    last_name: Mapped[str] = mapped_column(String(64), unique=True)
+    last_name: Mapped[str] = mapped_column(String(64))
     nickname: Mapped[str] = mapped_column(String(64), unique=True)
-    email: Mapped[str] = mapped_column(String(100))
+    email: Mapped[str] = mapped_column(String(100), unique=True)
     hashed_password: Mapped[str] = mapped_column(String(100))
