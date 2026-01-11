@@ -22,3 +22,7 @@ class User(BaseModel):
     last_name: str
     nickname: str
     email: EmailStr
+
+
+class UserWithHashedPassword(User):
+    hashed_password: str
