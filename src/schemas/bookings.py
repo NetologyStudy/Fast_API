@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 
 from pydantic import BaseModel
 
@@ -12,6 +12,7 @@ class BookingAddRequest(BaseModel):
 class BookingAdd(BookingAddRequest):
     user_id: int
     price: int
+    created_at: datetime
 
 
 class Booking(BookingAdd):
