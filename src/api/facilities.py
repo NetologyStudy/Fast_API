@@ -21,7 +21,7 @@ async def get(db: DBDep):
 )
 async def create_facility(db: DBDep, facilities_data: FacilityAdd = Body(openapi_examples={
     "1": {"summary": "test_1", "value":{
-        "title": "массаж"
+        "title": "Массаж"
     }},
     "2": {"summary": "test_2", "value":{
         "title": "WI-FI"
