@@ -33,7 +33,7 @@ async def get_particular_rooms(
         hotel_id: int = Path(description="Уникальный идентификатор отеля"),
         room_id: int = Path(description="Уникальный идентификатор номера")
 ):
-    return await db.rooms.get_one_or_none(id=room_id, hotel_id=hotel_id)
+    return await db.rooms.get_one_or_none_with_rels(id=room_id, hotel_id=hotel_id)
 
 
 @router.post(
