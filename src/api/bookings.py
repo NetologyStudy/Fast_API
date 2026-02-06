@@ -30,8 +30,7 @@ async def add_booking(
     _booking_data = BookingAdd(
         user_id=user_id,
         price=room_price,
-        created_at=datetime.now().isoformat(timespec="seconds"),
-        **booking_data.model_dump()
+        **booking_data.model_dump(exclude_unset=True)
     )
     booking = await db.bookings.add(_booking_data)
     await db.commit()
