@@ -16,10 +16,7 @@ class BookingsOrm(Base):
     date_from: Mapped[date]
     date_to: Mapped[date]
     price: Mapped[int]
-    created_at: Mapped[datetime] = mapped_column(
-        server_default=func.now(),
-        default=func.now(),
-    )
+    created_at: Mapped[datetime | None] = mapped_column(default=func.now())
 
     @hybrid_property
     def total_cost(self) -> int:
