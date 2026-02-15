@@ -1,13 +1,13 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from src.schemas.facilities import Facility
 
 
 class RoomAddRequest(BaseModel):
-    title: str
+    title: str = Field(min_length=1, max_length=100)
     description: str | None = None
-    price: int
-    quantity: int
+    price: int = Field(gt=0)
+    quantity: int = Field(ge=0)
     facilities_ids: list[int] = []
 
 

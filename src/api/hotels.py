@@ -37,7 +37,8 @@ async def get_hotels(
 @router.get(
     "/{hotel_id}",
     summary="Получение информации одного отеля",
-    description="<h1>Получение информации одного конкретного отеля по его id</h1>")
+    description="<h1>Получение информации одного конкретного отеля по его id</h1>"
+)
 async def get_one_hotels(db: DBDep, hotel_id: int = Path(description="Уникальный идентификатор")):
     return await db.hotels.get_one_or_none(id=hotel_id)
 
