@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Body
+from fastapi_cache.decorator import cache
 
 from src.api.dependencies import DBDep
 from src.schemas.facilities import FacilityAdd
@@ -10,7 +11,9 @@ router = APIRouter(prefix="/facilities", tags=["Удобства"])
     summary="Получение всех данных",
     description="<h1>Позволяет получить полную информацию о всех удобствах</h1>"
 )
-async def get(db: DBDep):
+@cache(expire=10)
+async def get_facilities(db: DBDep):
+    print("GO IN BASE")
     return await db.facilities.get_all()
 
 
